@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shaoshuai.mapper.CountyMapper">
+  <resultMap id="BaseResultMap" type="com.shaoshuai.domain.County">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="no" jdbcType="VARCHAR" property="no" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="weatherCode" jdbcType="VARCHAR" property="weathercode" />
+    <result column="cityid" jdbcType="INTEGER" property="cityid" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, no, name, weatherCode, cityid
+  </sql>
+  <select id="queryByCityId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_county
+    where cityid = #{id,jdbcType=INTEGER}
+  </select>
+
+</mapper>

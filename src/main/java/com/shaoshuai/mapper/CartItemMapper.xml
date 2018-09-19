@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shaoshuai.mapper.CartItemMapper">
+  <resultMap id="BaseResultMap" type="com.shaoshuai.domain.CartItem">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="gid" jdbcType="INTEGER" property="gid" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+  </resultMap>
+
+  <resultMap id="rm1" type="com.shaoshuai.domain.CartItem">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cid" jdbcType="INTEGER" property="cid" />
+    <result column="gid" jdbcType="INTEGER" property="gid" />
+    <result column="count" jdbcType="INTEGER" property="count" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <association property="goods" javaType="com.feri.domain.Goods">
+      <id property="id" jdbcType="INTEGER" column="gid"/>
+      <result property="name" column="name"/>
+      <result property="picurl" column="picurl"/>
+      <result property="price" column="price"/>
+      <result property="flag" column="gflag"/>
+    </association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cid, gid, count, createtime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_cartitem
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from t_cartitem
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByCid" parameterType="java.lang.Integer">
+    delete from t_cartitem
+    where cid = #{cid}
+  </delete>
+  <insert id="insert" parameterType="com.shaoshuai.domain.CartItem">
+    insert into t_cartitem (cid, gid, count, createtime)
+    values ( #{cid,jdbcType=INTEGER}, #{gid,jdbcType=INTEGER},
+      #{count,jdbcType=INTEGER}, now())
+  </insert>
+
+  <update id="updateById" >
+    update t_cartitem set count = count+#{count} where id = #{id}
+  </update>
+  <select id="selectByCid" resultMap="rm1">
+    select ci.*,g.name,g.price,g.picurl,g.flag gflag from t_cartitem ci left join t_goods g on ci.gid=g.id  where ci.cid=#{cid}
+  </select>
+  <select id="selectByids" resultMap="rm1" statementType="STATEMENT">
+    select ci.*,g.name,g.price,g.picurl,g.flag gflag from t_cartitem ci left join t_goods g on ci.gid=g.id  where ci.id in (${ids})
+  </select>
+  <select id="selectByCgid" resultType="java.lang.Integer">
+    select id from t_cartitem where cid=#{cid} and gid=#{gid}
+  </select>
+  <delete id="deleteIds" statementType="STATEMENT">
+    delete from t_cartitem where id in (${ids})
+  </delete>
+</mapper>
